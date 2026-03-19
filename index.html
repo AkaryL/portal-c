@@ -1,15 +1,917 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RED Jalisco</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Transitions between pages */
+    .page { display: none; }
+    .page.active { display: block; }
+    /* Smooth fade */
+    .fade-in { animation: fadeIn 0.3s ease-in; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    /* Card hover */
+    .feature-card:active { transform: scale(0.98); }
+    .feature-card:hover { transform: scale(1.02); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15); }
+    /* OTP inputs */
+    .otp-input { width: 40px; height: 48px; text-align: center; font-size: 1.25rem; font-weight: bold; border: 2px solid #e5e7eb; border-radius: 8px; outline: none; transition: border-color 0.2s; }
+    .otp-input:focus { border-color: #7c3aed; }
+  </style>
+</head>
+<body class="bg-gray-50">
 
-  <!DOCTYPE html>
-  <html lang="en">
-    <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>User request</title>
-    </head>
+  <!-- ========== WELCOME PAGE ========== -->
+  <div id="page-welcome" class="page">
+    <div class="min-h-screen bg-white flex items-center justify-center p-4">
+      <div class="max-w-md w-full">
+        <div class="bg-white rounded-3xl shadow-2xl overflow-hidden relative">
+          <!-- Skip button -->
+          <div id="welcome-skip-btn" class="absolute top-4 right-4 z-10 hidden">
+            <button onclick="completeWelcome()" class="bg-black/50 backdrop-blur-sm text-white p-2 rounded-full hover:bg-black/70 transition-colors">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
+          </div>
 
-    <body>
-      <div id="root"></div>
-      <script type="module" src="/src/main.tsx"></script>
-    </body>
-  </html>
-  
+          <!-- Video placeholder -->
+          <div class="relative aspect-square bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center p-8">
+            <div class="text-center text-white">
+              <div class="mb-6">
+                <div class="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg>
+                </div>
+                <h2 class="text-2xl font-bold mb-2">Video de Bienvenida</h2>
+                <p class="text-white/90 text-sm">Aqui se colocara el video explicativo</p>
+              </div>
+              <div id="welcome-countdown-text" class="text-sm">
+                Continuando en <span id="welcome-countdown" class="font-bold text-xl">10</span> segundos...
+              </div>
+            </div>
+          </div>
+
+          <!-- Continue button -->
+          <div id="welcome-continue-btn" class="p-6 hidden">
+            <button onclick="completeWelcome()" class="w-full py-4 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all">
+              Continuar
+            </button>
+          </div>
+        </div>
+        <p class="text-center text-gray-500 text-xs mt-4">Este espacio se utilizara para el video de bienvenida</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== HOME PAGE ========== -->
+  <div id="page-home" class="page">
+    <div class="min-h-screen" style="background-image: url('assets/bg-pattern.png'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+      <!-- Header -->
+      <header class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="max-w-md mx-auto px-4 py-3">
+          <div class="flex items-center gap-3">
+            <img src="assets/logo.png" alt="RED Jalisco" class="h-12" />
+          </div>
+        </div>
+      </header>
+
+      <!-- Main -->
+      <main class="max-w-md mx-auto px-4 py-2 pb-24">
+        <!-- Greeting (hidden by default) -->
+        <div id="home-greeting" class="mb-2.5 p-3 bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-200 rounded-xl hidden">
+          <p class="text-purple-900 text-sm font-medium">Hola, <span id="home-user-name"></span>!</p>
+          <p class="text-purple-700 text-xs mt-0.5">Bienvenido a RED Jalisco</p>
+        </div>
+
+        <!-- Feature Cards -->
+        <div class="space-y-2.5">
+          <!-- Jalisco TV -->
+          <button onclick="handleCardClick('jalisco-tv', false)" class="feature-card w-full h-28 text-white rounded-xl shadow-lg transition-all relative overflow-hidden">
+            <img src="assets/jalisco-tv.png" alt="Jalisco TV" class="absolute inset-0 w-full h-full object-cover" />
+            <div class="absolute inset-0 bg-gradient-to-br from-orange-500/80 via-orange-600/70 to-purple-600/80"></div>
+            <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent"></div>
+            <div class="absolute inset-0 p-4 flex flex-col justify-between">
+              <div class="flex items-start gap-3">
+                <div class="bg-white/25 backdrop-blur-sm p-2 rounded-lg shadow-lg">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></svg>
+                </div>
+                <div class="flex-1 text-left">
+                  <h3 class="text-base font-bold mb-0.5 drop-shadow-md">Jalisco TV</h3>
+                  <p class="text-white/95 text-xs drop-shadow-md">Entretenimiento y cultura</p>
+                </div>
+              </div>
+            </div>
+          </button>
+
+          <!-- Salud -->
+          <button onclick="handleCardClick('salud', true)" class="feature-card w-full h-28 text-white rounded-xl shadow-lg transition-all relative overflow-hidden">
+            <img src="assets/salud.png" alt="Salud" class="absolute inset-0 w-full h-full object-cover" />
+            <div class="absolute inset-0 bg-gradient-to-br from-orange-500/80 via-orange-600/70 to-purple-600/80"></div>
+            <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent"></div>
+            <div class="absolute inset-0 p-4 flex flex-col justify-between">
+              <div class="flex items-start gap-3">
+                <div class="bg-white/25 backdrop-blur-sm p-2 rounded-lg shadow-lg">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0016.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 002 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                </div>
+                <div class="flex-1 text-left">
+                  <h3 class="text-base font-bold mb-0.5 drop-shadow-md">Salud</h3>
+                  <p class="text-white/95 text-xs drop-shadow-md">Servicios medicos y bienestar</p>
+                </div>
+                <div id="lock-salud" class="bg-white/25 backdrop-blur-sm p-2 rounded-lg shadow-lg">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                </div>
+              </div>
+            </div>
+          </button>
+
+          <!-- Educacion -->
+          <button onclick="handleCardClick('educacion', true)" class="feature-card w-full h-28 text-white rounded-xl shadow-lg transition-all relative overflow-hidden">
+            <img src="assets/educacion.png" alt="Educacion" class="absolute inset-0 w-full h-full object-cover" />
+            <div class="absolute inset-0 bg-gradient-to-br from-orange-500/80 via-orange-600/70 to-purple-600/80"></div>
+            <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent"></div>
+            <div class="absolute inset-0 p-4 flex flex-col justify-between">
+              <div class="flex items-start gap-3">
+                <div class="bg-white/25 backdrop-blur-sm p-2 rounded-lg shadow-lg">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 1.1 2.7 2 6 2s6-.9 6-2v-5"/></svg>
+                </div>
+                <div class="flex-1 text-left">
+                  <h3 class="text-base font-bold mb-0.5 drop-shadow-md">Educacion</h3>
+                  <p class="text-white/95 text-xs drop-shadow-md">Recursos educativos</p>
+                </div>
+                <div id="lock-educacion" class="bg-white/25 backdrop-blur-sm p-2 rounded-lg shadow-lg">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                </div>
+              </div>
+            </div>
+          </button>
+
+          <!-- Programas Sociales -->
+          <button onclick="handleCardClick('programas-sociales', true)" class="feature-card w-full h-28 text-white rounded-xl shadow-lg transition-all relative overflow-hidden">
+            <img src="assets/programas-sociales.png" alt="Programas Sociales" class="absolute inset-0 w-full h-full object-cover" />
+            <div class="absolute inset-0 bg-gradient-to-br from-orange-500/80 via-orange-600/70 to-purple-600/80"></div>
+            <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent"></div>
+            <div class="absolute inset-0 p-4 flex flex-col justify-between">
+              <div class="flex items-start gap-3">
+                <div class="bg-white/25 backdrop-blur-sm p-2 rounded-lg shadow-lg">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+                </div>
+                <div class="flex-1 text-left">
+                  <h3 class="text-base font-bold mb-0.5 drop-shadow-md">Programas Sociales</h3>
+                  <p class="text-white/95 text-xs drop-shadow-md">Apoyo y beneficios</p>
+                </div>
+                <div id="lock-programas-sociales" class="bg-white/25 backdrop-blur-sm p-2 rounded-lg shadow-lg">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                </div>
+              </div>
+            </div>
+          </button>
+
+          <!-- Infraestructura -->
+          <button onclick="handleCardClick('infraestructura', true)" class="feature-card w-full h-28 text-white rounded-xl shadow-lg transition-all relative overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1767884161909-1abc7d766341?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080&q=80" alt="Infraestructura" class="absolute inset-0 w-full h-full object-cover" />
+            <div class="absolute inset-0 bg-gradient-to-br from-orange-500/80 via-orange-600/70 to-purple-600/80"></div>
+            <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent"></div>
+            <div class="absolute inset-0 p-4 flex flex-col justify-between">
+              <div class="flex items-start gap-3">
+                <div class="bg-white/25 backdrop-blur-sm p-2 rounded-lg shadow-lg">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="8" rx="1"/><path d="M17 14v7M7 14v7M17 3v3M7 3v3M2 14h20M2 6h20"/></svg>
+                </div>
+                <div class="flex-1 text-left">
+                  <h3 class="text-base font-bold mb-0.5 drop-shadow-md">Infraestructura</h3>
+                  <p class="text-white/95 text-xs drop-shadow-md">Obras y desarrollo urbano</p>
+                </div>
+                <div id="lock-infraestructura" class="bg-white/25 backdrop-blur-sm p-2 rounded-lg shadow-lg">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                </div>
+              </div>
+            </div>
+          </button>
+
+          <!-- Emergency Button -->
+          <button onclick="navigate('emergency')" class="feature-card w-full p-4 bg-gradient-to-br from-red-500 to-red-600 text-white rounded-xl shadow-lg transition-all">
+            <div class="flex items-center justify-between">
+              <div class="text-left">
+                <h3 class="text-lg font-bold mb-0.5">Boton de Panico</h3>
+                <p class="text-red-100 text-xs">Emergencias 911</p>
+              </div>
+              <div class="text-4xl font-bold">911</div>
+            </div>
+          </button>
+        </div>
+      </main>
+
+      <!-- Bottom bar -->
+      <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-20">
+        <div class="max-w-md mx-auto px-4 py-2.5 pb-16">
+          <button class="w-full py-3 px-5 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold rounded-xl shadow-lg flex items-center justify-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.11a6 6 0 016.95 0M12 20h.01"/></svg>
+            Conectar a Internet
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SELECTION PAGE ========== -->
+  <div id="page-selection" class="page">
+    <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      <header class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="max-w-md mx-auto px-4 py-4 flex items-center gap-4">
+          <button onclick="navigate('home')" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+            <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          </button>
+          <div>
+            <h1 id="selection-title" class="font-bold text-gray-900"></h1>
+            <p class="text-xs text-gray-600">Selecciona el alcance</p>
+          </div>
+        </div>
+      </header>
+
+      <main class="max-w-md mx-auto px-4 py-8 fade-in">
+        <div class="mb-6">
+          <h2 class="text-2xl font-bold text-gray-900 mb-2">Que informacion deseas ver?</h2>
+          <p class="text-gray-600">Selecciona entre informacion municipal o estatal</p>
+        </div>
+
+        <div class="space-y-4">
+          <button onclick="handleSelection('municipal')" class="feature-card w-full p-6 bg-white hover:bg-gray-50 rounded-2xl shadow-lg transition-all border-2 border-transparent hover:border-purple-200">
+            <div class="flex items-center gap-4">
+              <div class="bg-gradient-to-br from-purple-500 to-purple-700 p-4 rounded-xl">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 1116 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+              </div>
+              <div class="flex-1 text-left">
+                <h3 class="text-xl font-bold text-gray-900 mb-1">Municipal</h3>
+                <p class="text-gray-600 text-sm">Informacion de tu municipio</p>
+              </div>
+            </div>
+          </button>
+
+          <button onclick="handleSelection('estatal')" class="feature-card w-full p-6 bg-white hover:bg-gray-50 rounded-2xl shadow-lg transition-all border-2 border-transparent hover:border-orange-200">
+            <div class="flex items-center gap-4">
+              <div class="bg-gradient-to-br from-orange-500 to-orange-700 p-4 rounded-xl">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 22V4a2 2 0 012-2h8a2 2 0 012 2v18Z"/><path d="M6 12H4a2 2 0 00-2 2v6a2 2 0 002 2h2M18 9h2a2 2 0 012 2v9a2 2 0 01-2 2h-2"/></svg>
+              </div>
+              <div class="flex-1 text-left">
+                <h3 class="text-xl font-bold text-gray-900 mb-1">Estatal</h3>
+                <p class="text-gray-600 text-sm">Informacion de todo Jalisco</p>
+              </div>
+            </div>
+          </button>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- ========== INTERSTITIAL AD PAGE (fullscreen) ========== -->
+  <div id="page-ad" class="page">
+    <div class="fixed inset-0 bg-black z-50">
+      <!-- Fullscreen media (image or video as background) -->
+      <div id="ad-media" class="absolute inset-0"></div>
+
+      <!-- Text fallback (when no image/video) -->
+      <div id="ad-text-content" class="absolute inset-0"></div>
+
+      <!-- Close / countdown badge (top-right) -->
+      <div class="absolute top-4 right-4 z-10">
+        <button id="ad-close-btn" onclick="adContinue()" class="bg-gradient-to-br from-orange-500 to-purple-600 hover:from-orange-600 hover:to-purple-700 text-white p-3 rounded-full transition-colors shadow-lg hidden">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+        <div id="ad-countdown-badge" class="bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
+          Cerrar en <span id="ad-countdown">10</span>s
+        </div>
+      </div>
+
+      <!-- Continue button (bottom) -->
+      <div class="absolute bottom-6 left-4 right-4 z-10">
+        <button id="ad-continue-btn" onclick="adContinue()" disabled class="w-full max-w-md mx-auto block bg-gradient-to-r from-orange-500 to-purple-600 text-white py-4 px-6 rounded-xl font-semibold text-lg hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+          Continuar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== NEWS PAGE ========== -->
+  <div id="page-news" class="page">
+    <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      <header class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="max-w-md mx-auto px-4 py-4 flex items-center gap-4">
+          <button onclick="navigate('home')" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+            <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          </button>
+          <div>
+            <h1 id="news-title" class="font-bold text-gray-900"></h1>
+            <p id="news-subtitle" class="text-xs text-gray-600"></p>
+          </div>
+        </div>
+      </header>
+
+      <main class="max-w-md mx-auto px-4 py-6 fade-in">
+        <div id="news-list" class="space-y-4"></div>
+      </main>
+    </div>
+  </div>
+
+  <!-- ========== EMERGENCY PAGE ========== -->
+  <div id="page-emergency" class="page">
+    <div class="min-h-screen bg-gradient-to-br from-red-50 to-orange-50">
+      <header class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="max-w-md mx-auto px-4 py-4 flex items-center gap-4">
+          <button onclick="navigate('home')" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+            <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          </button>
+          <div>
+            <h1 class="font-bold text-gray-900">Emergencias</h1>
+            <p class="text-xs text-gray-600">Ayuda inmediata</p>
+          </div>
+        </div>
+      </header>
+
+      <main class="max-w-md mx-auto px-4 py-6 fade-in">
+        <!-- Location -->
+        <div class="bg-white rounded-2xl shadow-md p-4 mb-6 flex items-center gap-3">
+          <div class="bg-blue-100 p-3 rounded-xl">
+            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 1116 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <div>
+            <p class="text-sm text-gray-600">Tu ubicacion detectada:</p>
+            <p id="emergency-location" class="font-semibold text-gray-900">Detectando...</p>
+          </div>
+        </div>
+
+        <!-- Alert -->
+        <div class="bg-red-50 border-2 border-red-200 rounded-2xl p-4 mb-6 flex items-start gap-3">
+          <svg class="w-6 h-6 text-red-600 flex-shrink-0 mt-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <div>
+            <h3 class="font-bold text-red-900 mb-1">Usa solo en emergencias reales</h3>
+            <p class="text-sm text-red-700">El uso indebido de servicios de emergencia es un delito.</p>
+          </div>
+        </div>
+
+        <!-- 911 Button -->
+        <a href="tel:911" class="feature-card block w-full mb-8 bg-gradient-to-br from-red-500 to-red-600 text-white rounded-3xl shadow-2xl p-8 transition-all">
+          <div class="flex items-center justify-between mb-4">
+            <div class="text-left">
+              <h2 class="text-3xl font-bold mb-2">Llamar 911</h2>
+              <p class="text-red-100">Emergencias generales</p>
+            </div>
+            <svg class="w-16 h-16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          </div>
+          <div class="bg-white/20 backdrop-blur-sm rounded-2xl p-4">
+            <p class="text-sm text-white/90">Respuesta inmediata 24/7</p>
+          </div>
+        </a>
+
+        <!-- Other contacts (dynamic) -->
+        <div id="emergency-scope-badge" class="mb-3"></div>
+        <h3 class="font-bold text-gray-900 mb-4">Otros numeros de emergencia</h3>
+        <div id="emergency-contacts" class="space-y-3"></div>
+
+        <!-- Safety tips -->
+        <div class="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-6 mt-6">
+          <h3 class="font-bold text-gray-900 mb-3">Consejos de seguridad</h3>
+          <ul class="space-y-2 text-sm text-gray-700">
+            <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">&bull;</span><span>Manten la calma y habla claro</span></li>
+            <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">&bull;</span><span>Proporciona tu ubicacion exacta</span></li>
+            <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">&bull;</span><span>Describe la situacion brevemente</span></li>
+            <li class="flex items-start gap-2"><span class="text-blue-600 font-bold">&bull;</span><span>No cuelgues hasta que te lo indiquen</span></li>
+          </ul>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- ========== LOGIN MODAL ========== -->
+  <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeLoginModal()"></div>
+    <div class="relative bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl max-w-md w-full p-6 fade-in">
+      <button onclick="closeLoginModal()" class="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors">
+        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+
+      <div class="mb-6">
+        <h2 class="text-2xl font-bold text-gray-900 mb-2">Iniciar sesion</h2>
+        <p class="text-gray-600 text-sm">Ingresa tus datos para acceder a todas las funciones</p>
+      </div>
+
+      <!-- Login form -->
+      <div id="login-form">
+        <div class="mb-6">
+          <label for="fullName" class="text-gray-700 mb-2 block text-sm font-medium">Nombre completo *</label>
+          <input id="fullName" type="text" placeholder="Ingresa tu nombre completo" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" />
+          <p id="name-error" class="text-red-500 text-sm mt-1 hidden">Por favor ingresa tu nombre completo</p>
+        </div>
+
+        <div class="space-y-3 mb-6">
+          <p class="text-sm text-gray-600 mb-3">Metodo de autenticacion:</p>
+          <button onclick="handleFacebookLogin()" class="w-full py-3 px-4 bg-[#1877F2] hover:bg-[#166FE5] text-white rounded-xl font-medium transition-colors flex items-center justify-center gap-3 shadow-md">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            Continuar con Facebook
+          </button>
+
+          <div class="flex items-center gap-2">
+            <div class="flex-1 h-px bg-gray-300"></div>
+            <span class="text-xs text-gray-500">o</span>
+            <div class="flex-1 h-px bg-gray-300"></div>
+          </div>
+
+          <div>
+            <label for="phone" class="text-gray-700 mb-2 block text-sm font-medium">Numero de telefono</label>
+            <input id="phone" type="tel" placeholder="+52 33 1234 5678" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent mb-3" />
+          </div>
+          <button onclick="handlePhoneLogin()" class="w-full py-3 px-4 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-xl font-medium transition-colors flex items-center justify-center gap-3 shadow-md">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+            Continuar con Telefono
+          </button>
+        </div>
+      </div>
+
+      <!-- OTP form -->
+      <div id="otp-form" class="mb-6 hidden">
+        <div class="text-center mb-6">
+          <p class="text-gray-700 mb-2">Codigo enviado a:</p>
+          <p id="otp-phone-display" class="font-semibold text-gray-900"></p>
+        </div>
+        <label class="text-gray-700 mb-3 block text-center text-sm font-medium">Ingresa el codigo de 6 digitos</label>
+        <div class="flex justify-center gap-2 mb-4" id="otp-inputs">
+          <input type="text" maxlength="1" class="otp-input" oninput="otpNext(this, 0)" />
+          <input type="text" maxlength="1" class="otp-input" oninput="otpNext(this, 1)" />
+          <input type="text" maxlength="1" class="otp-input" oninput="otpNext(this, 2)" />
+          <input type="text" maxlength="1" class="otp-input" oninput="otpNext(this, 3)" />
+          <input type="text" maxlength="1" class="otp-input" oninput="otpNext(this, 4)" />
+          <input type="text" maxlength="1" class="otp-input" oninput="otpNext(this, 5)" />
+        </div>
+        <button onclick="backToLogin()" class="w-full text-center text-sm text-purple-600 hover:text-purple-700">← Volver</button>
+      </div>
+
+      <div class="text-center">
+        <button class="text-xs text-gray-600 hover:text-gray-800 underline">Acepto los Terminos y Condiciones</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== JAVASCRIPT ========== -->
+  <script>
+    // ---- STATE ----
+    let currentFeature = '';
+    let currentScope = '';
+    let selectedFeatureForLogin = '';
+    let adTimer = null;
+    let userCity = 'Jalisco';
+    let userRegion = 'Jalisco';
+
+    // ---- EMERGENCY CONTACTS BY MUNICIPALITY ----
+    const emergencyByMunicipality = {
+      'Guadalajara': [
+        { name: 'Policia Municipal', number: '33-1201-6500', icon: '&#x1F693;' },
+        { name: 'Bomberos', number: '33-1201-7700', icon: '&#x1F692;' },
+        { name: 'Cruz Roja', number: '33-3613-1550', icon: '&#x1F3E5;' },
+        { name: 'Cruz Verde Guadalajara', number: '33-3614-5252', icon: '&#x1F6D1;' },
+      ],
+      'Zapopan': [
+        { name: 'Policia Municipal', number: '33-3836-3600', icon: '&#x1F693;' },
+        { name: 'Proteccion Civil y Bomberos', number: '33-3818-2203', icon: '&#x1F692;' },
+        { name: 'Servicios de Salud', number: '33-3633-0929', icon: '&#x1F3E5;' },
+        { name: 'Reportes Municipales', number: '33-3818-2222', icon: '&#x26A0;&#xFE0F;' },
+      ],
+      'Tlaquepaque': [
+        { name: 'Policia Municipal', number: '33-3050-3050', icon: '&#x1F693;' },
+        { name: 'Bomberos', number: '33-1201-7700', icon: '&#x1F692;' },
+        { name: 'Cruz Roja', number: '33-3613-1550', icon: '&#x1F3E5;' },
+        { name: 'Proteccion Civil Jalisco', number: '33-3675-3060', icon: '&#x26A0;&#xFE0F;' },
+      ],
+      'San Pedro Tlaquepaque': [
+        { name: 'Policia Municipal', number: '33-3050-3050', icon: '&#x1F693;' },
+        { name: 'Bomberos', number: '33-1201-7700', icon: '&#x1F692;' },
+        { name: 'Cruz Roja', number: '33-3613-1550', icon: '&#x1F3E5;' },
+        { name: 'Proteccion Civil Jalisco', number: '33-3675-3060', icon: '&#x26A0;&#xFE0F;' },
+      ],
+      'Tonalá': [
+        { name: 'Policia Municipal', number: '33-3586-6101', icon: '&#x1F693;' },
+        { name: 'Proteccion Civil y Bomberos', number: '33-1200-3918', icon: '&#x1F692;' },
+        { name: 'Cruz Roja', number: '33-3613-1550', icon: '&#x1F3E5;' },
+        { name: 'Proteccion Civil Jalisco', number: '33-3675-3060', icon: '&#x26A0;&#xFE0F;' },
+      ],
+      'Tonala': [
+        { name: 'Policia Municipal', number: '33-3586-6101', icon: '&#x1F693;' },
+        { name: 'Proteccion Civil y Bomberos', number: '33-1200-3918', icon: '&#x1F692;' },
+        { name: 'Cruz Roja', number: '33-3613-1550', icon: '&#x1F3E5;' },
+        { name: 'Proteccion Civil Jalisco', number: '33-3675-3060', icon: '&#x26A0;&#xFE0F;' },
+      ],
+      'Tlajomulco de Zúñiga': [
+        { name: 'Policia Municipal', number: '33-3283-4400', icon: '&#x1F693;' },
+        { name: 'C4 Emergencias', number: '33-3283-4545', icon: '&#x1F692;' },
+        { name: 'Cruz Roja', number: '33-3613-1550', icon: '&#x1F3E5;' },
+        { name: 'Bomberos Tlajomulco', number: '33-3283-4400', icon: '&#x26A0;&#xFE0F;' },
+      ],
+      'Tlajomulco': [
+        { name: 'Policia Municipal', number: '33-3283-4400', icon: '&#x1F693;' },
+        { name: 'C4 Emergencias', number: '33-3283-4545', icon: '&#x1F692;' },
+        { name: 'Cruz Roja', number: '33-3613-1550', icon: '&#x1F3E5;' },
+        { name: 'Bomberos Tlajomulco', number: '33-3283-4400', icon: '&#x26A0;&#xFE0F;' },
+      ],
+      'Puerto Vallarta': [
+        { name: 'Policia Municipal', number: '322-290-0507', icon: '&#x1F693;' },
+        { name: 'Bomberos', number: '322-178-8800', icon: '&#x1F692;' },
+        { name: 'Cruz Roja', number: '322-222-1533', icon: '&#x1F3E5;' },
+        { name: 'Proteccion Civil', number: '322-225-0764', icon: '&#x26A0;&#xFE0F;' },
+      ],
+      'Lagos de Moreno': [
+        { name: 'Policia Municipal', number: '474-741-2145', icon: '&#x1F693;' },
+        { name: 'Emergencias Policia', number: '474-742-0696', icon: '&#x1F692;' },
+        { name: 'Cruz Roja', number: '33-3613-1550', icon: '&#x1F3E5;' },
+        { name: 'Proteccion Civil Jalisco', number: '33-3675-3060', icon: '&#x26A0;&#xFE0F;' },
+      ],
+      'Tepatitlán de Morelos': [
+        { name: 'Policia Municipal', number: '378-782-0685', icon: '&#x1F693;' },
+        { name: 'Bomberos', number: '33-1201-7700', icon: '&#x1F692;' },
+        { name: 'Cruz Roja', number: '33-3613-1550', icon: '&#x1F3E5;' },
+        { name: 'Proteccion Civil Jalisco', number: '33-3675-3060', icon: '&#x26A0;&#xFE0F;' },
+      ],
+      'Tepatitlan': [
+        { name: 'Policia Municipal', number: '378-782-0685', icon: '&#x1F693;' },
+        { name: 'Bomberos', number: '33-1201-7700', icon: '&#x1F692;' },
+        { name: 'Cruz Roja', number: '33-3613-1550', icon: '&#x1F3E5;' },
+        { name: 'Proteccion Civil Jalisco', number: '33-3675-3060', icon: '&#x26A0;&#xFE0F;' },
+      ],
+      'Chapala': [
+        { name: 'Policia Municipal', number: '376-765-2308', icon: '&#x1F693;' },
+        { name: 'Bomberos', number: '33-1201-7700', icon: '&#x1F692;' },
+        { name: 'Cruz Roja', number: '33-3613-1550', icon: '&#x1F3E5;' },
+        { name: 'Proteccion Civil Jalisco', number: '33-3675-3060', icon: '&#x26A0;&#xFE0F;' },
+      ],
+    };
+
+    // Numeros estatales de Jalisco (fallback)
+    const emergencyJalisco = [
+      { name: 'Policia Estatal', number: '33-3668-0660', icon: '&#x1F693;' },
+      { name: 'Bomberos Jalisco', number: '33-1201-7700', icon: '&#x1F692;' },
+      { name: 'Cruz Roja', number: '33-3613-1550', icon: '&#x1F3E5;' },
+      { name: 'Proteccion Civil Estatal', number: '33-3675-3060', icon: '&#x26A0;&#xFE0F;' },
+    ];
+
+    function renderEmergencyContacts() {
+      const contacts = emergencyByMunicipality[userCity] || null;
+      const isMunicipal = !!contacts;
+      const list = contacts || emergencyJalisco;
+      const badgeEl = document.getElementById('emergency-scope-badge');
+      const listEl = document.getElementById('emergency-contacts');
+
+      if (isMunicipal) {
+        badgeEl.innerHTML = '<span class="inline-block px-3 py-1.5 bg-purple-100 text-purple-800 text-xs font-semibold rounded-full">Numeros de emergencia de ' + userCity + '</span>';
+      } else {
+        badgeEl.innerHTML = '<span class="inline-block px-3 py-1.5 bg-orange-100 text-orange-800 text-xs font-semibold rounded-full">Mostrando numeros de emergencia del Estado de Jalisco</span>';
+      }
+
+      listEl.innerHTML = list.map(c => {
+        const tel = c.number.replace(/-/g, '');
+        return '<a href="tel:' + tel + '" class="block bg-white rounded-xl shadow-md p-4 hover:shadow-lg transition-all"><div class="flex items-center gap-4"><div class="text-3xl">' + c.icon + '</div><div class="flex-1"><h4 class="font-semibold text-gray-900">' + c.name + '</h4><p class="text-sm text-gray-600">' + c.number + '</p></div></div></a>';
+      }).join('');
+    }
+
+    // ---- GEOLOCATION BY IP ----
+    fetch('https://ipapi.co/json/')
+      .then(r => r.json())
+      .then(data => {
+        if (data.city) userCity = data.city;
+        if (data.region) userRegion = data.region;
+        // Update emergency screen
+        const locEl = document.getElementById('emergency-location');
+        if (locEl) locEl.textContent = userCity + ', ' + userRegion;
+        renderEmergencyContacts();
+      })
+      .catch(() => { renderEmergencyContacts(); });
+
+    // ---- NEWS DATA ----
+    // ---- NEWS BY CATEGORY ----
+    const newsByCategory = {
+      'default': [
+        { id: 1, title: 'Avalan en Jalisco Paquete Economico 2026 con enfoque en bienestar y crecimiento', date: '16 de diciembre, 2025', excerpt: 'El Congreso de Jalisco aprobo el Paquete Economico 2026 por 182 mil 692 millones de pesos, con enfoque en finanzas publicas responsables y desarrollo estatal.', image: 'https://jaliscotv.com/wp-content/uploads/2025/12/G7ITBQHXIAEBeWL.jpeg', url: 'https://jaliscotv.com/avalan-paquete-economico-2026/' },
+        { id: 2, title: 'Impulsan estrategia economica en Jalisco', date: '27 de febrero, 2026', excerpt: 'El Gobierno de Jalisco, ayuntamientos y sectores productivos instalaron la Mesa de Impulso Economico para acelerar la reactivacion economica del estado.', image: 'https://www.informador.mx/__export/1772189575397/sites/elinformador/img/2026/02/27/20260227_042726995_4410441_version1772189569910.jpg_258748544.jpg', url: 'https://www.informador.mx/jalisco/impulsan-estrategia-economica-en-jalisco-20260227-0022.html' },
+        { id: 3, title: 'Gobierno de Jalisco presenta Paquete Economico 2026 con enfoque social y estrategico', date: '3 de noviembre, 2025', excerpt: 'El gobierno estatal entrego una propuesta presupuestaria de 181 mil 548 millones de pesos, priorizando seguridad y busqueda de personas desaparecidas.', image: 'https://cloudfront-us-east-1.images.arcpublishing.com/lacronicadehoy/P4QVZF47JJD6ZDI7RCQUSG5N44.jpeg', url: 'https://www.cronica.com.mx/jalisco/guadalajara/2025/11/03/gobierno-de-jalisco-presenta-paquete-economico-2026-con-enfoque-social-y-estrategico/' },
+        { id: 4, title: 'El C5 Jalisco evoluciona: aprueban 6 mil mdp para modernizar videovigilancia', date: '25 de marzo, 2025', excerpt: 'El Gobierno de Jalisco invertira 6,377 millones de pesos para modernizar el sistema de videovigilancia Escudo Jalisco C5i con inteligencia artificial.', image: 'https://www.informador.mx/__export/1742942477910/sites/elinformador/img/2025/03/25/el_c5_jalisco_evolucionax_aprueban_bolsa_de_6_mil_mdp_para_modernizar_al_sistema_de_videovigilancia_version1742942475590.jpeg_938592834.jpeg', url: 'https://www.informador.mx/jalisco/El-C5-Jalisco-evoluciona-aprueban-bolsa-de-6-mil-mdp-para-modernizar-al-sistema-de-videovigilancia-20250325-0189.html' },
+      ],
+      'salud': [
+        { id: 1, title: 'Jalisco va con todo en el desarrollo de infraestructura medica', date: '25 de enero, 2023', excerpt: 'El gobierno de Jalisco ha invertido mas de 2,250 millones de pesos en la construccion del Hospital Civil de Oriente en Tonala y el Instituto de Cancerologia en Zapopan.', image: 'https://movimientociudadano.mx/storage/news/T5dBAq1yKmBn74qqBpdmBL1wFVOeEWxwMoCocB0e.png', url: 'https://movimientociudadano.mx/noticias/jalisco-va-con-todo-en-el-desarrollo-de-infraestructura-medica' },
+        { id: 2, title: 'Jalisco se mueve por la salud de las y los ciudadanos', date: '9 de mayo, 2022', excerpt: 'El gobierno de Jalisco planea invertir 6,160 millones de pesos en tres anos para construir y rehabilitar infraestructura medica en todo el estado.', image: 'https://movimientociudadano.mx/storage/news/3AtDlHonQ2c9AFK2UkrGtYTWeidQk2SzAlc77pHN.png', url: 'https://movimientociudadano.mx/jalisco/noticias/jalisco-se-mueve-por-la-salud-de-las-y-los-ciudadanos' },
+        { id: 3, title: 'Hicimos ley la atencion integral del cancer infantil en Jalisco', date: '21 de octubre, 2022', excerpt: 'La Bancada Naranja logro la aprobacion de la primera ley integral de cancer infantil en Jalisco, con cobertura universal y atencion integral.', image: 'https://movimientociudadano.mx/storage/news/ywQ8ppdM1K9l8Waa3ywJ1c7N279euuqBkGNLROeT.png', url: 'https://movimientociudadano.mx/noticias/hicimos-ley-la-atencion-integral-del-cancer-infantil-en-jalisco' },
+        { id: 4, title: 'Se fortalece la estrategia contra el dengue en Jalisco', date: '14 de junio, 2022', excerpt: 'Jalisco logro reducir los casos confirmados de dengue en mas de 96% gracias a campanas intensivas de prevencion e inversion gubernamental.', image: 'https://movimientociudadano.mx/storage/news/You8OT2C4LQIkeVYk4H0eGcXnq8Q29m2EPnJd3UT.png', url: 'https://movimientociudadano.mx/noticias/se-fortalece-la-estrategia-contra-el-dengue-en-jalisco' },
+      ],
+      'educacion': [
+        { id: 1, title: 'La educacion en Jalisco recibira un incremento de mas de $4 mil 500 millones en 2026', date: '29 de diciembre, 2025', excerpt: 'El sector educativo de Jalisco recibira un incremento presupuestal de 8.96% para 2026, pasando de 51.3 mil a 55.9 mil millones de pesos.', image: 'https://cloudfront-us-east-1.images.arcpublishing.com/lacronicadehoy/NNFEQH6SOFCMRCZ6WHJGDKUHRI.jpeg', url: 'https://www.cronica.com.mx/jalisco/guadalajara/2025/12/29/la-educacion-en-jalisco-recibira-un-incremento-de-mas-de-4-mil-500-millones-en-2026/' },
+        { id: 2, title: 'Arranca Jalisco el Ciclo Escolar 2025-2026 con apuesta integral por la calidad educativa', date: '2 de septiembre, 2025', excerpt: 'Jalisco arranca el ciclo escolar 2025-2026 con medidas integrales para mejorar la calidad educativa y los resultados de aprendizaje en todo el estado.', image: 'https://apprende.jalisco.gob.mx/wp-content/uploads/2025/09/boletin46-scaled.jpeg', url: 'https://apprende.jalisco.gob.mx/noticia/arranca-jalisco-el-ciclo-escolar-2025-2026-con-una-apuesta-integral-por-la-calidad-educativa/' },
+        { id: 3, title: 'Presupuesto Participativo: Jalisco impulsa 60 escuelas renovadas', date: '21 de febrero, 2026', excerpt: 'El gobierno de Jalisco destina 1,700 millones de pesos en presupuesto participativo, incluyendo la renovacion de 60 escuelas en las 12 regiones del estado.', image: 'https://www.informador.mx/__export/1771664219487/sites/elinformador/img/2026/02/21/20260221_025548688_4400486_version1771664214737.jpg_75946679.jpg', url: 'https://www.informador.mx/jalisco/presupuesto-participativo-jalisco-impulsa-60-escuelas-renovadas-y-agua-en-todos-los-municipios-20260221-0024.html' },
+        { id: 4, title: 'Avalan Paquete Economico 2026 con enfoque en educacion', date: '16 de diciembre, 2025', excerpt: 'El Congreso de Jalisco aprobo el Paquete Economico 2026 por 182.7 mil millones de pesos, con gasto estrategico en educacion, salud e infraestructura.', image: 'https://jaliscotv.com/wp-content/uploads/2025/12/G7ITBQHXIAEBeWL.jpeg', url: 'https://jaliscotv.com/avalan-paquete-economico-2026/' },
+      ],
+      'programas-sociales': [
+        { id: 1, title: 'Llegan apoyos para personas cuidadoras y estancias infantiles', date: '18 de marzo, 2026', excerpt: 'El gobierno de Jalisco lanzo la convocatoria 2026 para programas de apoyo a personas cuidadoras y estancias infantiles, con inversion de 20 mil millones de pesos.', image: 'https://jaliscotv.com/wp-content/uploads/2026/03/55153302523_070de94c19_c.jpg', url: 'https://jaliscotv.com/apoyos-personas-cuidadoras/' },
+        { id: 2, title: 'Abren convocatoria para Yo Jalisco: Apoyo a Personas Cuidadoras', date: '17 de marzo, 2026', excerpt: 'El gobierno de Jalisco abrio inscripciones para el programa que incluye servicios gratuitos de estancias infantiles y apoyo economico para mas de 4,000 beneficiarios.', image: 'https://www.informador.mx/__export/1773779461424/sites/elinformador/img/2026/03/17/f0to_-3-_version1773779459483.png_1865666284.png', url: 'https://www.informador.mx/jalisco/abren-convocatoria-para-el-programa-yo-jalisco-apoyo-a-personas-cuidadoras-20260317-0117.html' },
+        { id: 3, title: 'Lanzan programas sociales Yo Jalisco', date: '4 de abril, 2025', excerpt: 'El gobierno de Jalisco presento la iniciativa Yo Jalisco con diez nuevos programas sociales, invirtiendo 2,400 millones de pesos para beneficiar a 1.5 millones de habitantes.', image: 'https://www.informador.mx/__export/1743800093461/sites/elinformador/img/2025/04/04/lanzan_programas_sociales_yo_jalisco_version1743799766229.jpg_938592834.jpg', url: 'https://www.informador.mx/jalisco/Lanzan-programas-sociales-Yo-Jalisco-20250404-0146.html' },
+        { id: 4, title: 'Cabildo de Guadalajara aprueba 22 programas sociales para 2026', date: '30 de enero, 2026', excerpt: 'El Cabildo de Guadalajara aprobo por unanimidad 22 programas sociales para 2026, incluyendo Escuelas con Corazon y Renta para Jovenes.', image: 'https://www.informador.mx/__export/1769819660347/sites/elinformador/img/2026/01/30/55069588375_e257931be0_k_crop1769819306386.jpg_554688468.jpg', url: 'https://www.informador.mx/jalisco/cabildo-de-guadalajara-aprueba-22-programas-sociales-para-2026-20260130-0180.html' },
+      ],
+      'infraestructura': [
+        { id: 1, title: 'Jalisco tiene mas presupuesto para infraestructura previo al Mundial 2026', date: '24 de febrero, 2026', excerpt: 'Jalisco destina significativamente mas presupuesto a infraestructura en la antesala del Mundial 2026, con proyectos criticos de movilidad en marcha.', image: 'https://cdn-3.expansion.mx/dims4/default/a5e2fe1/2147483647/resize/1280x/quality/90/?url=https%3A%2F%2Fcdn-3.expansion.mx%2Fdb%2F90%2Fea2075e84a62bfb95ccfb4934e2e%2Fistock-2168116345-1.jpg', url: 'https://obras.expansion.mx/infraestructura/2026/02/24/jalisco-tiene-mas-presupuesto-infraestructura-que-seguridad' },
+        { id: 2, title: 'Alistan inauguracion de proyectos de movilidad e infraestructura en Jalisco', date: '5 de noviembre, 2025', excerpt: 'El gobernador confirmo que la Linea 4 del Tren Ligero iniciara operaciones antes de fin de ano, y la Linea 5 BRT electrico estara lista para el Mundial 2026.', image: 'https://www.informador.mx/__export/1762332753071/sites/elinformador/img/2025/11/05/linea_4_crop1762332747657.jpg_1970638775.jpg', url: 'https://www.informador.mx/jalisco/alistan-la-inauguracion-de-proyectos-de-movilidad-e-infraestructura-en-jalisco-20251105-0009.html' },
+        { id: 3, title: 'Puerto Vallarta: Gobierno estatal lanza plan de infraestructura y movilidad', date: '4 de enero, 2025', excerpt: 'El gobierno estatal presento un plan vial para Puerto Vallarta con inversion de mas de 1,971 millones de pesos en accesos al aeropuerto y corredores turisticos.', image: 'https://www.informador.mx/__export/1735987895639/sites/elinformador/img/2025/01/04/plan_movilidad_vallarta_crop1735987880719.jpg_1970638775.jpg', url: 'https://www.informador.mx/jalisco/Puerto-Vallarta-Gobierno-estatal-lanza-plan-de-infraestructura-y-movilidad-20250104-0028.html' },
+        { id: 4, title: 'Jalisco y Nuevo Leon presentan avances de infraestructura rumbo al Mundial 2026', date: '27 de noviembre, 2025', excerpt: 'Las sedes mexicanas coordinan obras en conectividad, transporte y modernizacion urbana. Jalisco desarrolla proyectos de electromovilidad para el evento.', image: 'https://www.infobae.com/resizer/v2/6G45NPBDMJBJXCC32TL63BJTLU.png?auth=a121903f68d13731997a2a1517c4c6039ce512eac740aa8d246be59b24673b00&smart=true&width=1200&height=900&quality=85', url: 'https://www.infobae.com/mexico/2025/11/27/cdmx-jalisco-y-nuevo-leon-presentan-avances-de-infraestructura-rumbo-al-mundial-2026/' },
+      ],
+    };
+
+    // ---- AD CONFIG ----
+    const adConfigs = {
+      'programas-sociales': {
+        'municipal': { type: 'image', src: 'assets/media/programas-sociales-municipal.jpeg', duration: 5 },
+        'estatal': { type: 'video', src: 'assets/media/programas-sociales-estatal.mp4', duration: 10 },
+      },
+      'salud': {
+        'municipal': { type: 'video', src: 'https://mageova.network/video_05Dic.mp4', duration: 10 },
+        'estatal': { type: 'video', src: 'https://mageova.network/encuesta-unica/videooooo.mp4', duration: 10 },
+      },
+      'educacion': {
+        'municipal': { type: 'video', src: 'https://mageova.network/portal-redjal/video.mp4', duration: 10 },
+        'estatal': { type: 'video', src: 'https://mageova.network/huawei-test/videooooo.mp4', duration: 10 },
+      },
+      'infraestructura': {
+        'municipal': { type: 'video', src: 'https://mageova.network/video_05Dic.mp4', duration: 10 },
+        'estatal': { type: 'video', src: 'https://mageova.network/portal-redjal/video.mp4', duration: 10 },
+      },
+    };
+
+    // ---- CATEGORY NAMES ----
+    const categoryNames = {
+      'jalisco-tv': 'Jalisco TV',
+      'salud': 'Salud',
+      'educacion': 'Educacion',
+      'programas-sociales': 'Programas Sociales',
+      'infraestructura': 'Infraestructura',
+    };
+
+    // ---- NAVIGATION ----
+    function navigate(page) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      const target = document.getElementById('page-' + page);
+      if (target) target.classList.add('active');
+    }
+
+    // ---- AUTH ----
+    function isAuthenticated() {
+      return localStorage.getItem('isAuthenticated') === 'true';
+    }
+
+    function updateLocks() {
+      const locked = !isAuthenticated();
+      ['salud', 'educacion', 'programas-sociales', 'infraestructura'].forEach(id => {
+        const el = document.getElementById('lock-' + id);
+        if (el) el.style.display = locked ? 'block' : 'none';
+      });
+      // Greeting
+      const greeting = document.getElementById('home-greeting');
+      const nameEl = document.getElementById('home-user-name');
+      if (isAuthenticated() && localStorage.getItem('userName')) {
+        greeting.classList.remove('hidden');
+        nameEl.textContent = localStorage.getItem('userName');
+      } else {
+        greeting.classList.add('hidden');
+      }
+    }
+
+    // ---- CARD CLICK ----
+    function handleCardClick(feature, requiresAuth) {
+      if (requiresAuth && !isAuthenticated()) {
+        selectedFeatureForLogin = feature;
+        openLoginModal();
+      } else if (feature === 'jalisco-tv') {
+        currentFeature = 'jalisco-tv';
+        currentScope = '';
+        showNews();
+      } else {
+        currentFeature = feature;
+        document.getElementById('selection-title').textContent = categoryNames[feature] || '';
+        navigate('selection');
+      }
+    }
+
+    // ---- SELECTION ----
+    function handleSelection(scope) {
+      currentScope = scope;
+      showAd();
+    }
+
+    // ---- AD ----
+    function showAd() {
+      navigate('ad');
+      if (adTimer) clearInterval(adTimer);
+
+      const config = adConfigs[currentFeature]?.[currentScope] || null;
+      const duration = config?.duration ?? 10;
+      const mediaEl = document.getElementById('ad-media');
+      const textEl = document.getElementById('ad-text-content');
+      const closeBtn = document.getElementById('ad-close-btn');
+      const countdownBadge = document.getElementById('ad-countdown-badge');
+      const continueBtn = document.getElementById('ad-continue-btn');
+      const countdownSpan = document.getElementById('ad-countdown');
+
+      // Reset state
+      closeBtn.classList.add('hidden');
+      countdownBadge.classList.remove('hidden');
+      continueBtn.disabled = true;
+      continueBtn.textContent = `Continuar (${duration})`;
+      countdownSpan.textContent = duration;
+      mediaEl.innerHTML = '';
+      textEl.innerHTML = '';
+
+      if (config) {
+        if (config.type === 'video') {
+          mediaEl.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-black"><video id="ad-video" playsinline class="max-w-full max-h-full object-contain"><source src="${config.src}" type="video/mp4"></video></div>`;
+          // Start muted (required by browsers), then unmute
+          setTimeout(() => {
+            const vid = document.getElementById('ad-video');
+            if (vid) {
+              vid.muted = true;
+              vid.play().then(() => { vid.muted = false; }).catch(() => {});
+            }
+          }, 100);
+        } else {
+          mediaEl.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-black"><img src="${config.src}" alt="Anuncio" class="max-w-full max-h-full object-contain" /></div>`;
+        }
+      } else {
+        textEl.innerHTML = `
+          <div class="w-full h-full bg-gradient-to-br from-orange-400 to-purple-600 flex items-center justify-center p-8">
+            <div class="text-center text-white">
+              <h2 class="text-3xl md:text-4xl font-bold mb-2">Anuncio del Gobierno</h2>
+              <p class="text-white/80 text-sm uppercase tracking-wide mb-8">Informacion de servicio publico</p>
+              <h3 class="text-2xl font-semibold mb-4">Mantente Informado</h3>
+              <p class="text-lg text-white/90 leading-relaxed">RED Jalisco conecta a todos los ciudadanos con servicios digitales del gobierno estatal.</p>
+            </div>
+          </div>`;
+      }
+
+      let remaining = duration;
+      adTimer = setInterval(() => {
+        remaining--;
+        countdownSpan.textContent = remaining;
+        continueBtn.textContent = `Continuar (${remaining})`;
+        if (remaining <= 0) {
+          clearInterval(adTimer);
+          closeBtn.classList.remove('hidden');
+          countdownBadge.classList.add('hidden');
+          continueBtn.disabled = false;
+          continueBtn.textContent = 'Continuar';
+        }
+      }, 1000);
+    }
+
+    function adContinue() {
+      if (adTimer) clearInterval(adTimer);
+      // Stop video and audio before leaving
+      const vid = document.getElementById('ad-video');
+      if (vid) { vid.pause(); vid.src = ''; }
+      showNews();
+    }
+
+    // ---- NEWS ----
+    function showNews() {
+      const titleEl = document.getElementById('news-title');
+      const subtitleEl = document.getElementById('news-subtitle');
+      const listEl = document.getElementById('news-list');
+
+      titleEl.textContent = categoryNames[currentFeature] || '';
+      if (!currentScope) {
+        subtitleEl.textContent = 'Noticias del estado';
+      } else {
+        subtitleEl.textContent = currentScope === 'municipal' ? 'Informacion Municipal' : 'Informacion Estatal';
+      }
+
+      const news = newsByCategory[currentFeature] || newsByCategory['default'];
+      const locations = [userCity, userCity, userCity, userCity];
+
+      listEl.innerHTML = news.map((item, i) => {
+        const location = currentScope === 'municipal' ? userCity : userRegion;
+        return `
+          <article class="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition-shadow fade-in">
+            <div class="aspect-video bg-gradient-to-br from-purple-100 to-orange-100 overflow-hidden">
+              <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover" />
+            </div>
+            <div class="p-5">
+              <h2 class="text-lg font-bold text-gray-900 mb-2">${item.title}</h2>
+              <p class="text-gray-600 text-sm mb-4">${item.excerpt}</p>
+              <div class="flex items-center gap-4 text-xs text-gray-500 mb-4">
+                <div class="flex items-center gap-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  <span>${item.date}</span>
+                </div>
+                <div class="flex items-center gap-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 1116 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                  <span>${location}</span>
+                </div>
+              </div>
+              ${item.url ? '<a href="' + item.url + '" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-purple-600 text-white text-sm font-semibold py-2 px-4 rounded-lg hover:shadow-lg transition-all"><span>Ver mas</span><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>' : ''}
+              </div>
+            </div>
+          </article>`;
+      }).join('');
+
+      navigate('news');
+    }
+
+    // ---- LOGIN MODAL ----
+    function openLoginModal() {
+      document.getElementById('login-modal').classList.remove('hidden');
+      document.getElementById('login-form').classList.remove('hidden');
+      document.getElementById('otp-form').classList.add('hidden');
+      document.getElementById('fullName').value = '';
+      document.getElementById('phone').value = '';
+      document.getElementById('name-error').classList.add('hidden');
+    }
+
+    function closeLoginModal() {
+      document.getElementById('login-modal').classList.add('hidden');
+      selectedFeatureForLogin = '';
+    }
+
+    function handleFacebookLogin() {
+      const name = document.getElementById('fullName').value.trim();
+      if (!name) {
+        document.getElementById('name-error').classList.remove('hidden');
+        return;
+      }
+      localStorage.setItem('userName', name);
+      localStorage.setItem('isAuthenticated', 'true');
+      closeLoginModal();
+      updateLocks();
+      if (selectedFeatureForLogin) {
+        currentFeature = selectedFeatureForLogin;
+        document.getElementById('selection-title').textContent = categoryNames[currentFeature] || '';
+        navigate('selection');
+      }
+    }
+
+    function handlePhoneLogin() {
+      const name = document.getElementById('fullName').value.trim();
+      if (!name) {
+        document.getElementById('name-error').classList.remove('hidden');
+        return;
+      }
+      const phone = document.getElementById('phone').value.trim();
+      if (!phone) { alert('Por favor ingresa tu numero de telefono'); return; }
+      document.getElementById('otp-phone-display').textContent = phone;
+      document.getElementById('login-form').classList.add('hidden');
+      document.getElementById('otp-form').classList.remove('hidden');
+      // Focus first OTP input
+      document.querySelector('#otp-inputs input').focus();
+    }
+
+    function otpNext(input, index) {
+      const inputs = document.querySelectorAll('#otp-inputs input');
+      if (input.value && index < 5) inputs[index + 1].focus();
+      // Check if all filled
+      const code = Array.from(inputs).map(i => i.value).join('');
+      if (code.length === 6) {
+        const name = document.getElementById('fullName').value.trim();
+        localStorage.setItem('userName', name);
+        localStorage.setItem('isAuthenticated', 'true');
+        closeLoginModal();
+        updateLocks();
+        if (selectedFeatureForLogin) {
+          currentFeature = selectedFeatureForLogin;
+          document.getElementById('selection-title').textContent = categoryNames[currentFeature] || '';
+          navigate('selection');
+        }
+      }
+    }
+
+    function backToLogin() {
+      document.getElementById('login-form').classList.remove('hidden');
+      document.getElementById('otp-form').classList.add('hidden');
+    }
+
+    // ---- WELCOME ----
+    function initWelcome() {
+      if (localStorage.getItem('welcomeShown') === 'true') {
+        navigate('home');
+        updateLocks();
+        return;
+      }
+      navigate('welcome');
+      let count = 10;
+      const timer = setInterval(() => {
+        count--;
+        document.getElementById('welcome-countdown').textContent = count;
+        if (count <= 0) {
+          clearInterval(timer);
+          document.getElementById('welcome-countdown-text').classList.add('hidden');
+          document.getElementById('welcome-skip-btn').classList.remove('hidden');
+          document.getElementById('welcome-continue-btn').classList.remove('hidden');
+        }
+      }, 1000);
+    }
+
+    function completeWelcome() {
+      localStorage.setItem('welcomeShown', 'true');
+      navigate('home');
+      updateLocks();
+    }
+
+    // ---- INIT ----
+    initWelcome();
+  </script>
+</body>
+</html>
